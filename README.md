@@ -4,7 +4,7 @@ A responsive event signup page with required name, email, and phone fields. Regi
 
 ## Organizer dashboard
 
-Visit `/organizer` to view registrations, refresh the list, and download all entries as CSV. The dashboard and export endpoint require ChatGPT sign-in and a server-side match against `ORGANIZER_EMAIL`. Configure that value in the hosting environment; never put personal registrations in the repository. CSV exports protect against spreadsheet formula injection.
+Visit `/organizer` to view registrations, refresh the list, and download all entries as CSV. The Sites dashboard requires organizer sign-in. The Vercel dashboard uses a private access link, with no login required. Configure that value in the hosting environment; never put personal registrations in the repository. CSV exports protect against spreadsheet formula injection.
 
 The site currently uses owner-only Sites access. If the event page is made public later, organizer routes still enforce the organizer account check.
 
@@ -20,4 +20,4 @@ Run `npx tsc --noEmit` to check types and `npm run build` to build. Database sch
 
 Vercel submits validated registrations server-to-server to the existing private Sites backend, preserving one database. Configure `SITES_SERVICE_TOKEN` as a server-only Vercel environment variable from the private Site service credential. Never use a `NEXT_PUBLIC_` prefix or commit the token. Missing credentials fail safely without claiming the signup was saved.
 
-On Vercel, `/organizer` opens the private Sites organizer dashboard, which requires organizer sign-in. CSV exports remain behind the same organizer authorization.
+On Vercel, open `/organizer/access?key=YOUR_PRIVATE_ACCESS_KEY` once to establish a secure, HttpOnly organizer cookie. The browser redirects to `/organizer` without leaving the key in the address bar. All organizer data and CSV endpoints check organizer access server-side. Configure the same `ORGANIZER_ACCESS_KEY` secret on Sites and Vercel production. Treat the private link like a password: anyone receiving it can view and export contact details. Rotate the shared key to revoke existing links and cookies. The backend remains private; its service credential is never sent to the browser.
