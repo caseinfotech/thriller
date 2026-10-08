@@ -1,0 +1,10 @@
+import type { Metadata } from "next";
+import { Moon } from "lucide-react";
+export const metadata:Metadata={title:"Four-week Lesson Plan | South Haven Thriller Flash Mob",description:"Learn the blocks, put them to music, practice formation and technique, and prepare for dress rehearsal."};
+const weeks=[
+ {title:"WEEK 1: Learn the Blocks",date:"October 8",steps:["Start with Zombie Walk warmup","BLOCK TWO","BLOCK THREE","BLOCK FOUR","BLOCK FIVE","Give out video for practice sessions"]},
+ {title:"WEEK 2: Put Blocks to Music + Timing",date:"October 15",steps:["BLOCK ONE","Review each block and put them in order","Stand wherever and practice to music all blocks together"]},
+ {title:"WEEK 3: Formation + Technique",date:"October 22",steps:["Whomever feels most comfortable be on the outsides/front of the wide triangle (or if in lines) the first and the second lines","PRACTICE AND WATCH FOR TECHNIQUE"]},
+ {title:"WEEK 4: Dress Rehearsal + Practice to Music",date:"October 29",steps:["PRACTICE ON REPEAT IN FORMATION"]}
+];
+export default function LessonPlan(){return <main className="lesson-plan"><header className="organizer-header"><a className="brand" href="/"><Moon size={23}/><span>SOUTH HAVEN <b>THRILLER FLASH MOB</b></span></a><a href="/">Back to the event</a></header><div className="lesson-intro"><p className="eyebrow">THURSDAYS AT 5:00 PM · MOOSE LODGE, SOUTH HAVEN</p><h1>Four weeks.<br/>One Thriller flash mob.</h1><p>The lesson plan</p><a className="lesson-video-link" href="/#videos">Watch the practice videos</a></div><div className="lesson-weeks">{weeks.map(week=><section className="lesson-week" key={week.date}><p className="lesson-date">{week.date}</p><h2>{week.title}</h2><ul>{week.steps.map(step=><li key={step}>{step}</li>)}</ul></section>)}</div><footer><span>SOUTH HAVEN THRILLER FLASH MOB</span><a href="https://nextdesign.dev" target="_blank" rel="noopener noreferrer">digital experience by Next Design</a></footer></main>}
