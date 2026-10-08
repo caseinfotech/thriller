@@ -1,8 +1,12 @@
+import { env } from "cloudflare:workers";
+import { redirect } from "next/navigation";
+import { sitesOrigin } from "../../lib/sites-backend";
 import { requireChatGPTUser } from "../chatgpt-auth";
 import { getOrganizer, signupDatabase, type Signup } from "../../lib/organizer";
 import { Download, Moon, Users } from "lucide-react";
 export const dynamic="force-dynamic";
 export default async function Organizer({searchParams}:{searchParams:Promise<{page?:string}>}){
+ if(env.SITES_BACKEND)redirect(sitesOrigin+"/organizer");
  await requireChatGPTUser("/organizer");
  const owner=await getOrganizer();
  if(!owner)return <main className="organizer"><a href="/">Back to the event</a><h1>Organizer access only</h1><p>Sign in with the organizer account to view registrations.</p><a href="/signout-with-chatgpt?return_to=%2Forganizer" target="_top">Switch account</a></main>;
