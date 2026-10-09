@@ -54,7 +54,11 @@ export async function POST(request:Request) {
     let accepted=0;
     for(let start=0;start<payloads.length;start+=100) {
       const result=await fetch("https://api.resend.com/emails/batch",{method:"POST",headers:{Authorization:"Bearer "+resendKey,"Content-Type":"application/json","Idempotency-Key":`thriller-notice/${requestId}/${start}`},body:JSON.stringify(payloads.slice(start,start+100)),signal:AbortSignal.timeout(15000)});
-      if(!result.ok)return response({error:accepted?`${accepted} notices were accepted; the rest were not confirmed. Retry this same notice to safely continue.`:"The email service did not accept the notice. Check delivery setup and retry this same notice."},502);
+      if(!result.ok){
+        const detail=await result.json().catch(()=>({})) as {name?:string;message?:string};
+        const reason=typeof detail.message==="string"?detail.message.replace(/re_[A-Za-z0-9_-]+/g,"[redacted]").replace(/[\r\n]/g," ").slice(0,400):"Check delivery setup.";
+        return response({error:accepted?`${accepted} notices were accepted; the rest were not confirmed. Retry this same notice to safely continue.`:`The email service did not accept the notice: ${reason}`,providerStatus:result.status},502);
+      }
       const data=await result.json() as {data?:{id:string}[]};
       if(data.data?.length!==Math.min(100,payloads.length-start))return response({error:"The email service returned an unexpected result. Retry this same notice."},502);
       accepted+=data.data.length;
