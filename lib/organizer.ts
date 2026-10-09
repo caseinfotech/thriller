@@ -16,4 +16,4 @@ export async function getOrganizer(){
  return user&&allowed&&user.email.toLowerCase()===allowed?user:null;
 }
 export function signupDatabase(){if(!env.DB)throw new Error("Registration database unavailable");return env.DB;}
-export type Signup={id:string;name:string;email:string;phone:string;created_at:string};
+export type Signup={id:string;name:string;email:string;phone:string;created_at:string;source?:string;attendance_count?:number};

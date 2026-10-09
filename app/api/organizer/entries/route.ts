@@ -24,7 +24,7 @@ export async function POST(request:Request){
    if(!r.headers.get("content-type")?.includes("application/json"))throw new Error();return reply(await r.json(),r.status);
   }
   const {name,email,phone}=parsed.data;
-  const inserted=await signupDatabase().prepare("INSERT INTO signups (id,name,email,phone) SELECT ?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM signups WHERE LOWER(TRIM(name)) = ? OR (? <> '' AND LOWER(email) = ?)) RETURNING id").bind(crypto.randomUUID(),name,email.toLowerCase(),phone,name.toLowerCase(),email.toLowerCase(),email.toLowerCase()).first<{id:string}>();
+  const inserted=await signupDatabase().prepare("INSERT INTO signups (id,name,email,phone,source) SELECT ?,?,?,?,'handwritten' WHERE NOT EXISTS (SELECT 1 FROM signups WHERE LOWER(TRIM(name)) = ? OR (? <> '' AND LOWER(email) = ?)) RETURNING id").bind(crypto.randomUUID(),name,email.toLowerCase(),phone,name.toLowerCase(),email.toLowerCase(),email.toLowerCase()).first<{id:string}>();
   return reply({status:inserted?"registered":"already_registered"},inserted?201:200);
  }catch{return reply({error:"Registration could not be confirmed. Check the list before retrying."},503);}
 }

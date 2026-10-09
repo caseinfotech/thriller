@@ -15,6 +15,13 @@
       "when": 1791511524538,
       "tag": "0001_glossy_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791513716787,
+      "tag": "0002_little_sally_floyd",
+      "breakpoints": true
     }
   ]
 }

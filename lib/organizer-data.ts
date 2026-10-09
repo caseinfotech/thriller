@@ -9,6 +9,6 @@ export async function organizerBackend(path:string){
 export async function registrationPage(requestedPage:number):Promise<{rows:Signup[];total:number;page:number}>{
  if(env.SITES_BACKEND){const response=await organizerBackend("/api/organizer/entries?page="+requestedPage);if(!response.headers.get("content-type")?.includes("application/json"))throw new Error("Unexpected organizer response");return await response.json() as {rows:Signup[];total:number;page:number};}
  const db=signupDatabase();const total=(await db.prepare("SELECT COUNT(*) AS total FROM signups").first<{total:number}>())?.total??0;const page=Math.min(requestedPage,Math.max(1,Math.ceil(total/50)));
- const rows=(await db.prepare("SELECT id,name,email,phone,created_at FROM signups ORDER BY created_at DESC,id DESC LIMIT 50 OFFSET ?").bind((page-1)*50).all<Signup>()).results;
+ const rows=(await db.prepare("SELECT s.id,s.name,s.email,s.phone,s.created_at,s.source,(SELECT COUNT(*) FROM attendance a WHERE a.signup_id=(SELECT MIN(id) FROM signups s2 WHERE LOWER(TRIM(s2.name))=LOWER(TRIM(s.name)))) AS attendance_count FROM signups s ORDER BY s.created_at DESC,s.id DESC LIMIT 50 OFFSET ?").bind((page-1)*50).all<Signup>()).results;
  return {rows,total,page};
 }

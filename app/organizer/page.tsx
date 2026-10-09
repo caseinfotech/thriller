@@ -3,6 +3,7 @@ import { requireChatGPTUser } from "../chatgpt-auth";
 import { getOrganizer, type Signup } from "../../lib/organizer";
 import { registrationPage } from "../../lib/organizer-data";
 import { Download, Moon, Users } from "lucide-react";
+import AttendanceSummary from "./attendance-summary";
 import NoticeDashboard from "./notice-dashboard";
 export const dynamic="force-dynamic";
 export default async function Organizer({searchParams}:{searchParams:Promise<{page?:string}>}){
@@ -13,6 +14,6 @@ export default async function Organizer({searchParams}:{searchParams:Promise<{pa
  let rows:Signup[]=[];let total=0;let unavailable=false;
  try{const result=await registrationPage(page);rows=result.rows;total=result.total;page=result.page;}catch(e){console.error("Organizer dashboard unavailable");unavailable=true;}
  return <main className="organizer"><header className="organizer-header"><a className="brand" href="/"><Moon size={23}/><span>SOUTH HAVEN <b>THRILLER FLASH MOB</b></span></a><a href="/">View event page</a></header><div className="organizer-heading"><div><p className="eyebrow">PRIVATE · ORGANIZER ONLY</p><h1>Who’s joining the mob?</h1><p className="organizer-subtitle">Your event registrations, all in one place.</p></div>{!unavailable&&total>0&&<a className="export-button" href="/api/organizer/export"><Download size={19}/> Download CSV</a>}</div>
- {unavailable?<div className="organizer-empty" role="alert"><h2>Registrations are temporarily unavailable</h2><p>Please refresh the page in a moment.</p><a href="/organizer">Try again</a></div>:<><div className="signup-count"><Users size={22}/><strong>{total}</strong><span>{total===1?"participant registered":"participants registered"}</span></div>{total===0?<div className="organizer-empty"><h2>The mob starts here.</h2><p>No registrations yet. New signups will appear here after they’re submitted.</p><a href="/organizer">Refresh registrations</a></div>:<NoticeDashboard initialRows={rows} initialPage={page} total={total}/>}</>}
+ {unavailable?<div className="organizer-empty" role="alert"><h2>Registrations are temporarily unavailable</h2><p>Please refresh the page in a moment.</p><a href="/organizer">Try again</a></div>:<><AttendanceSummary/><div className="signup-count"><Users size={22}/><strong>{total}</strong><span>{total===1?"participant registered":"participants registered"}</span></div>{total===0?<div className="organizer-empty"><h2>The mob starts here.</h2><p>No registrations yet. New signups will appear here after they’re submitted.</p><a href="/organizer">Refresh registrations</a></div>:<NoticeDashboard initialRows={rows} initialPage={page} total={total}/>}</>}
  <p className="organizer-privacy">Anyone with the private organizer link can view and export these registrations. Signup times are shown in Eastern Time.</p><footer><a href="https://nextdesign.dev" target="_blank" rel="noopener noreferrer">digital experience by Next Design</a></footer></main>;
 }

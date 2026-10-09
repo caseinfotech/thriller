@@ -10,5 +10,5 @@ export async function POST(request:Request){
  if(!input.success)return Response.json({error:input.error.issues[0].message},{status:400});
  if(env.SITES_BACKEND)return saveThroughSites(input.data);
  if(input.data.website)return Response.json({status:"registered"},{status:201});
- try{const {name,email,phone}=input.data;await database().prepare("INSERT INTO signups (id, name, email, phone) VALUES (?, ?, ?, ?)").bind(crypto.randomUUID(),name,email.toLowerCase(),phone).run();return Response.json({status:"registered"},{status:201});}catch(error){console.error("Signup save failed",error);return Response.json({error:"We couldn’t save your signup. Please try again shortly."},{status:503});}
+ try{const {name,email,phone}=input.data;await database().prepare("INSERT INTO signups (id, name, email, phone, source) VALUES (?, ?, ?, ?, 'online')").bind(crypto.randomUUID(),name,email.toLowerCase(),phone).run();return Response.json({status:"registered"},{status:201});}catch(error){console.error("Signup save failed",error);return Response.json({error:"We couldn’t save your signup. Please try again shortly."},{status:503});}
 }
