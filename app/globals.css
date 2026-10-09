@@ -19,3 +19,5 @@
 .typed-notes{padding:24px 28px}.typed-notes h3{font-family:'Barlow Condensed',sans-serif;font-size:26px;margin:0 0 12px}.block-setup{color:#e5ad68;font-size:14px;line-height:1.6}.typed-notes dl{margin:20px 0 0}.choreography-step{padding:15px 0;border-top:1px solid #ffffff18}.choreography-step dt{font-weight:700;color:var(--cream);font-size:14px;margin-bottom:6px}.choreography-step dd{margin:0;color:#c5c8d3;font-size:15px;line-height:1.65}.block-note{border-left:2px solid #e5ad68;padding-left:12px;color:#a6adbc;font-size:12px;line-height:1.6;margin:20px 0 0}@media(max-width:640px){.typed-notes{padding:20px}}
 
 .technique-video{margin-top:24px;max-width:820px}.technique-video iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#000}.youtube-watch-link{display:inline-flex;align-items:center;gap:12px;margin:16px 20px;font-size:14px;text-underline-offset:5px}
+
+.flyer-column{min-width:0}.flyer-column>.eyebrow{margin:0 0 24px}.flyer-column .poster-wrap{margin-top:0}@media(max-width:640px){.flyer-column{width:100%}.flyer-column>.eyebrow{width:88%;margin:0 auto 24px}.flyer-column .poster-wrap{margin:0 auto}}
