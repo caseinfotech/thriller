@@ -44,6 +44,7 @@ export async function POST(request:Request) {
     const rows:{id:string;email:string}[]=[];
     for(let start=0;start<recipientIds.length;start+=100){const ids=recipientIds.slice(start,start+100);rows.push(...(await db.prepare(`SELECT id,email FROM signups WHERE id IN (${ids.map(()=>"?").join(",")})`).bind(...ids).all<{id:string;email:string}>()).results);}
     let emails;try{emails=uniqueRecipients(rows,recipientIds);}catch{return response({error:"A selected registration is no longer available. Refresh the list."},409);}
+    if(!emails.length)return response({error:"Selected registrations have no email addresses. No notice was sent."},400);
     const payloads=noticeEmails(emails,env.NOTICE_FROM_EMAIL!,subject,message);
     let accepted=0;
     for(let start=0;start<payloads.length;start+=100) {

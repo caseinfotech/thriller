@@ -9,7 +9,7 @@ export const noticeSchema = z.discriminatedUnion("action", [
 ]);
 export function uniqueRecipients(rows: {id:string;email:string}[], ids: string[]) {
   if (rows.length !== ids.length || !ids.every(id => rows.some(row => row.id === id))) throw new Error("A selected registration is no longer available. Refresh the list.");
-  return [...new Set(rows.map(row => row.email.trim().toLowerCase()))].sort();
+  return [...new Set(rows.map(row => row.email.trim().toLowerCase()).filter(email => email.length > 0))].sort();
 }
 export function noticeEmails(emails: string[], from: string, subject: string, message: string) {
   return emails.map(email => ({ from, to: [email], subject: `South Haven Thriller — ${subject}`,

@@ -24,3 +24,8 @@ test('validates the hashed PIN and rejects mismatches',async()=>{
  assert.equal(await matchesPin('123456',hash),true);
  assert.equal(await matchesPin('123457',hash),false);assert.equal(await matchesPin('123456',''),false);
 });
+
+test('name-only registrations are omitted from notice recipients',()=>{
+ assert.deepEqual(uniqueRecipients([{id:a,email:''},{id:b,email:'person@example.test'}],[a,b]),['person@example.test']);
+ assert.deepEqual(uniqueRecipients([{id:a,email:''}],[a]),[]);
+});
