@@ -13,7 +13,7 @@ export function uniqueRecipients(rows: {id:string;email:string}[], ids: string[]
 }
 export function noticeEmails(emails: string[], from: string, subject: string, message: string) {
   return emails.map(email => ({ from, to: [email], subject: `South Haven Thriller — ${subject}`,
-    text: `${message}\n\nSouth Haven Thriller Flash Mob\nEvent notice for registered participants.\nhttps://tinyurl.com/sohathriller`,
+    text: `${message}\n\nSouth Haven Thriller Flash Mob\nEvent notice for registered participants.`,
   }));
 }
 export async function pinDigest(pin: string) {

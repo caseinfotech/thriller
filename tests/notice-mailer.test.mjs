@@ -16,7 +16,7 @@ test('resolves only selected registrations, deduplicates addresses, and keeps re
 test('every notice has exactly one private recipient and an event footer',()=>{
  const emails=noticeEmails(['a@example.test','b@example.test'],'noreply@nextdesign.dev','Reminder','Practice Thursday');
  assert.deepEqual(emails.map(e=>e.to),[['a@example.test'],['b@example.test']]);
- assert.ok(emails.every(e=>e.subject==='South Haven Thriller — Reminder'&&e.text.includes('https://tinyurl.com/sohathriller')));
+ assert.ok(emails.every(e=>e.subject==='South Haven Thriller — Reminder'&&e.text.includes('Event notice for registered participants.')&&!e.text.includes('https://tinyurl.com/sohathriller')));
  assert.ok(emails.every(e=>!('cc' in e)&&!('bcc' in e)));
 });
 test('validates the hashed PIN and rejects mismatches',async()=>{
