@@ -1,8 +1,11 @@
 import { z } from "zod";
+import { classForSignup } from "./attendance";
+import { classes } from "./check-in";
 
 const person = z.object({ name: z.string().trim().min(2).max(120), email: z.union([z.literal(""), z.string().trim().email().max(254)]), phone: z.string().trim().max(30).regex(/^[+0-9() .-]*$/) }).strict();
 export const reconciliationSchema = z.object({
   action: z.enum(["preview", "apply"]), batchId: z.string().uuid(), snapshot: z.string().regex(/^[a-f0-9]{64}$/).optional(),
+  recordSignupAttendance: z.boolean().optional(),
   additions: z.array(person).max(100),
   updates: z.array(person.extend({ id: z.string().uuid() }).strict()).max(100),
   merges: z.array(z.object({ keepId: z.string().uuid(), removeIds: z.array(z.string().uuid()).min(1).max(10) }).strict()).max(50),
@@ -59,16 +62,39 @@ export function buildReconciliation(input: Reconciliation, rows: RegistrationRow
     return { ...row, ...(merge ? { email: merge.email, phone: merge.phone } : {}), ...update?.after };
   }).concat(additions.map(row => ({ ...row, source: "handwritten", created_at: "" })));
   const seenAttendance = new Set<string>();
-  const attendance = (input.classAttendance?.participants ?? []).map(name => {
+  const attendance: { id: string; name: string; email: string; sessionId: string; checkedInAt?: string; alreadyPresent: boolean }[] = (input.classAttendance?.participants ?? []).map(name => {
     const matches = finalRows.filter(row => nameKey(row.name) === nameKey(name));
-    if (matches.length !== 1) throw new Error(`Attendance for ${name} needs a single matching registration.`);
-    const row = matches[0];
+    if (!matches.length || new Set(matches.map(row => row.name.trim().toLowerCase())).size !== 1) throw new Error(`Attendance for ${name} needs a matching registration.`);
+    const row = [...matches].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)[0];
     if (seenAttendance.has(row.id)) throw new Error("A participant appears twice in this attendance import.");
     seenAttendance.add(row.id);
     const merge = merges.find(item => item.keep.id === row.id);
-    const ids = new Set([row.id, ...(merge?.duplicates.map(item => item.id) ?? [])]);
-    return { id: row.id, name: row.name, email: row.email, alreadyPresent: visits.some(visit => visit.session_id === input.classAttendance!.sessionId && ids.has(visit.signup_id)) };
+    const ids = new Set([...matches.map(match => match.id), ...(merge?.duplicates.map(item => item.id) ?? [])]);
+    const sessionId = input.classAttendance!.sessionId;
+    const checkedInAt = matches.map(match => match.created_at).filter(date => date && classForSignup(date)?.id === sessionId).sort()[0] ?? classes.find(session => session.id === sessionId)!.day + " 21:00:00";
+    return { id: row.id, name: row.name, email: row.email || matches.find(match => match.email)?.email || "", sessionId, checkedInAt, alreadyPresent: visits.some(visit => visit.session_id === input.classAttendance!.sessionId && ids.has(visit.signup_id)) };
   });
+  if (additions.length && (!input.classAttendance || additions.some(row => !input.classAttendance!.participants.some(name => nameKey(name) === nameKey(row.name))))) {
+    throw new Error("Each new paper signup needs its dated class attendance in the import.");
+  }
+  if (input.recordSignupAttendance) {
+    const planned = new Set(attendance.map(person => `${person.sessionId}:${person.id}`));
+    for (const row of finalRows) {
+      // A scanned sheet supplies its class explicitly, rather than using its upload time.
+      if (row.source === "handwritten" || !row.created_at) continue;
+      const session = classForSignup(row.created_at);
+      if (!session) continue;
+      const sessionId = session.id;
+      const sameName = finalRows.filter(other => other.name.trim().toLowerCase() === row.name.trim().toLowerCase());
+      const canonical = [...sameName].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)[0];
+      const ids = new Set(sameName.map(other => other.id));
+      for (const merge of merges) if (ids.has(merge.keep.id)) merge.duplicates.forEach(duplicate => ids.add(duplicate.id));
+      const key = `${sessionId}:${canonical.id}`;
+      if (planned.has(key) || visits.some(visit => visit.session_id === sessionId && ids.has(visit.signup_id))) continue;
+      planned.add(key);
+      attendance.push({ id: canonical.id, name: row.name, email: row.email, sessionId, checkedInAt: row.created_at, alreadyPresent: false });
+    }
+  }
   return { additions, updates, merges, attendance, totalAfter: rows.length + additions.length - removed.size, mergedCount: removed.size };
 }
 
@@ -76,8 +102,8 @@ export const signupsSnapshotSql = "SELECT json_group_array(json_object('id',id,'
 export const attendanceSnapshotSql = "SELECT json_group_array(json_object('session_id',session_id,'participant_email',participant_email,'signup_id',signup_id,'checked_in_at',checked_in_at)) FROM (SELECT session_id,participant_email,signup_id,checked_in_at FROM attendance ORDER BY session_id,signup_id)";
 
 export function reconciliationStatements(input: Reconciliation, plan: ReturnType<typeof buildReconciliation>, signupsJson: string, attendanceJson: string, snapshot: string) {
-  const statements: { sql: string; args: (string | number)[] }[] = [];
-  const push = (sql: string, ...args: (string | number)[]) => statements.push({ sql, args });
+  const statements: { sql: string; args: (string | number | null)[] }[] = [];
+  const push = (sql: string, ...args: (string | number | null)[]) => statements.push({ sql, args });
   push(`INSERT INTO registration_reconciliations(id,snapshot,plan,signups_before,attendance_before,consistent) VALUES (?,?,?,?,?,CASE WHEN (${signupsSnapshotSql})=? AND (${attendanceSnapshotSql})=? THEN 1 ELSE 0 END)`, input.batchId, snapshot, JSON.stringify(input), signupsJson, attendanceJson, signupsJson, attendanceJson);
   for (const merge of plan.merges) {
     push("UPDATE signups SET email=?,phone=?,created_at=? WHERE id=?", merge.email, merge.phone, merge.createdAt, merge.keep.id);
@@ -93,6 +119,6 @@ export function reconciliationStatements(input: Reconciliation, plan: ReturnType
     push("UPDATE attendance SET participant_email=? WHERE signup_id=?", after.email, after.id);
   }
   for (const entry of plan.additions) push("INSERT INTO signups(id,name,email,phone,source) VALUES (?,?,?,?,'handwritten')", entry.id, entry.name, entry.email, entry.phone);
-  for (const person of plan.attendance) push("INSERT OR IGNORE INTO attendance(session_id,participant_email,signup_id) VALUES (?,?,?)", input.classAttendance!.sessionId, person.email, person.id);
+  for (const person of plan.attendance) push("INSERT OR IGNORE INTO attendance(session_id,participant_email,signup_id,checked_in_at) VALUES (?,?,?,COALESCE(?,CURRENT_TIMESTAMP))", person.sessionId, person.email, person.id, person.checkedInAt ?? null);
   return statements;
 }

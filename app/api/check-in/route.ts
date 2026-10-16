@@ -1,4 +1,5 @@
 import {env} from 'cloudflare:workers';
+import {attendanceInsert,participantAttendanceCountSql,signupTimestamp} from '../../../lib/attendance';
 import {signupDatabase} from '../../../lib/organizer';
 import {sitesOrigin} from '../../../lib/sites-backend';
 import {checkInSchema,todaysClasses,matchPerson,type Person} from '../../../lib/check-in';
@@ -25,10 +26,9 @@ export async function POST(request:Request){
    rows=(await db.prepare('SELECT id,name,email,phone FROM signups').all<Person>()).results;match=matchPerson(name,rows,normalizedEmail,phone);
   }
   if(match.kind!=='match')return reply({error:'Ask the organizer to help match your registration.'},409);
-  // Duplicate records with the same full name share the oldest canonical ID used by the baseline migration.
-  const person=match.person;const canonical=await db.prepare('SELECT MIN(id) AS id FROM signups WHERE LOWER(TRIM(name))=LOWER(TRIM(?))').bind(person.name).first<{id:string}>();const id=canonical?.id||person.id;
-  await db.prepare('INSERT OR IGNORE INTO attendance(session_id,participant_email,signup_id) VALUES(?,?,?)').bind(session.id,person.email.trim().toLowerCase(),id).run();
-  const count=(await db.prepare('SELECT COUNT(*) AS count FROM attendance WHERE signup_id=?').bind(id).first<{count:number}>())?.count??0;
+  const person=match.person,visit=attendanceInsert(person.name,person.email,session.id,signupTimestamp());
+  await db.prepare(visit.sql).bind(...visit.args).run();
+  const count=(await db.prepare(participantAttendanceCountSql).bind(person.name).first<{count:number}>())?.count??0;
   return reply({status:'checked_in',session,attendanceCount:count});
  }catch{console.error('Check-in unavailable');return reply({error:'Check-in is temporarily unavailable. Retrying will not count the class twice.'},503);}
 }
