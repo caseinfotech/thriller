@@ -22,7 +22,7 @@ export default function Practice() {
           <h1>A little practice.<br /><em>A lot of Thriller.</em></h1>
           <p>Learn with Jess, repeat your favorite moves, and find your tempo.</p>
           <nav className={styles.shortcuts} aria-label="Practice resources">
-            <a href="#jess-video">Practice with Jess</a><a href="#tempo">Thriller tempo</a><a href="#videos">Step-by-step videos</a><a href="/moves-cheatsheets">Moves Cheatsheets</a>
+            <a href="#jess-video">Practice with Jess</a><a href="#jess-video-3">Another view</a><a href="#tempo">Thriller tempo</a><a href="#videos">Step-by-step videos</a><a href="/moves-cheatsheets">Moves Cheatsheets</a>
           </nav>
         </section>
         <PracticeMedia>
@@ -35,9 +35,23 @@ export default function Practice() {
               <p className={styles.small}>Use the full-screen button for a closer look.</p>
             </div>
             <div className={styles.portraitVideo}>
-              <video controls playsInline preload="metadata" poster="/videos/jess-practice.jpg" aria-label="Practice with Jess">
-                <source src="/videos/jess-practice.mp4" type="video/mp4" />
-                Your browser does not support video playback. <a href="/videos/jess-practice.mp4">Open Jess’s practice video</a>
+              <video controls playsInline preload="metadata" poster="/videos/jess-practice-v2.jpg" aria-label="Practice with Jess">
+                <source src="/videos/jess-practice-v2.mp4" type="video/mp4" />
+                Your browser does not support video playback. <a href="/videos/jess-practice-v2.mp4">Open Jess’s practice video</a>
+              </video>
+            </div>
+          </section>
+          <section className={styles.feature} id="jess-video-3" aria-labelledby="jess-third-heading">
+            <div className={styles.featureCopy}>
+              <p className="eyebrow">VIDEO 3 · 1:39</p>
+              <h2 id="jess-third-heading">Follow along<br />from behind.</h2>
+              <p>A rear view of the routine to help you follow Jess’s direction. Pause or drag the timeline back to go over a section again.</p>
+              <a className={styles.tempoLink} href="/moves-cheatsheets">Keep the move instructions handy <ArrowUpRight size={18} aria-hidden="true" /></a>
+            </div>
+            <div className={styles.portraitVideo}>
+              <video controls playsInline preload="metadata" poster="/videos/jess-practice-3.jpg" aria-label="Practice with Jess: rear view">
+                <source src="/videos/jess-practice-3.mp4" type="video/mp4" />
+                Your browser does not support video playback. <a href="/videos/jess-practice-3.mp4">Open Jess’s rear-view practice video</a>
               </video>
             </div>
           </section>
