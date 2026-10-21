@@ -2,7 +2,7 @@ import { z } from "zod";
 export const classes=[
  {id:"thriller-2026-week-1",title:"Class 1 · Learn the Blocks",date:"October 8",day:"2026-10-08",location:"Moose Lodge"},
  {id:"thriller-2026-week-2",title:"Class 2 · Music + Timing",date:"October 15",day:"2026-10-15",location:"Senior Service Center",directions:"Find us by the North Entrance by the chiropractor, then you will be directed to the auditorium."},
- {id:"thriller-2026-week-3",title:"Class 3 · Formation + Technique",date:"October 22",day:"2026-10-22",location:"Location TBD"},
+ {id:"thriller-2026-week-3",title:"Class 3 · Formation + Technique",date:"October 22",day:"2026-10-22",location:"Moose Lodge",directions:"Be prepared to be outside."},
  {id:"thriller-2026-week-4",title:"Class 4 · Dress Rehearsal",date:"October 29",day:"2026-10-29",location:"Location TBD"},
 ];
 export function easternDay(now=new Date()){const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Detroit',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);return ['year','month','day'].map(k=>parts.find(p=>p.type===k)?.value).join('-');}
