@@ -22,7 +22,7 @@ export default function Practice() {
           <h1>A little practice.<br /><em>A lot of Thriller.</em></h1>
           <p>Learn with Jess, repeat your favorite moves, and find your tempo.</p>
           <nav className={styles.shortcuts} aria-label="Practice resources">
-            <a href="#jess-video">Practice with Jess</a><a href="#jess-video-2">Video 2</a><a href="#jess-video-3">Video 3</a><a href="#tempo">Thriller tempo</a><a href="#videos">Step-by-step videos</a><a href="/moves-cheatsheets">Moves Cheatsheets</a>
+            <a href="#jess-video">Practice with Jess</a><a href="#jess-video-2">Video 2</a><a href="#jess-video-3">Video 3</a><a href="#tempo">Thriller tempo</a><a href="#videos">Thriller reference</a><a href="/moves-cheatsheets">Moves Cheatsheets</a>
           </nav>
         </section>
         <PracticeMedia>
@@ -79,12 +79,8 @@ export default function Practice() {
             <PracticePlayer />
           </section>
           <section className={styles.tutorials} id="videos" aria-labelledby="tutorials-heading">
-            <p className="eyebrow">BREAK IT DOWN</p>
-            <h2 id="tutorials-heading">Every move, step by step.</h2>
-            <div className={styles.videoGrid}>
-              <article className={styles.videoCard}><h3>Step Instructions</h3><video controls playsInline preload="metadata" poster="/videos/step-instrucions.jpg" aria-label="Step Instructions"><source src="/videos/step-instrucions.mp4" type="video/mp4" />Your browser does not support video playback. <a href="/videos/step-instrucions.mp4">Open Step Instructions</a></video></article>
-              <article className={styles.videoCard}><h3>Steps to Music</h3><video controls playsInline preload="metadata" poster="/videos/steps-to-music.jpg" aria-label="Steps to Music"><source src="/videos/steps-to-music.mp4" type="video/mp4" />Your browser does not support video playback. <a href="/videos/steps-to-music.mp4">Open Steps to Music</a></video></article>
-            </div>
+            <p className="eyebrow">FOLLOW THE ORIGINAL</p>
+            <h2 id="tutorials-heading">Thriller reference.</h2>
             <article className={styles.reference} id="technique-costume">
               <h3>Zombie Walk, Technique &amp; Costumes</h3>
               <iframe src="https://www.youtube.com/embed/4V90AmXnguw?feature=oembed&start=46" title="Reference for Zombie Walk, Technique and Costumes" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
