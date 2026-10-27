@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "South Haven Thriller Flash Mob",
-  description: "Join the South Haven community Thriller Flash Mob on October 30. No dance experience needed.",
+  description: "South Haven Thriller Flash Mob: final practice October 29 at Moose Lodge, 5 PM. October 30 meet-up at First Congregational Church, 6 PM; performance approx. 7:15 PM after the Headless Horseman finishes its route.",
   other: {
     "codex-preview": "development",
   },
