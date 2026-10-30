@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { getOrganizer, organizerAccessKey, signupDatabase } from "../../../../lib/organizer";
 import { sitesOrigin } from "../../../../lib/sites-backend";
 import { csvCell } from "../../../../lib/signup-csv";
+import { formatEasternTime } from "../../../../lib/eastern-time";
 
 export const dynamic = "force-dynamic";
 type Contact = { id: string; email: string; name: string; created_at: string };
@@ -39,7 +40,7 @@ export async function GET(request: Request) {
   try {
     const rows = (await signupDatabase().prepare("SELECT id,email,name,created_at FROM future_event_contacts ORDER BY created_at DESC,id DESC").all<Contact>()).results;
     if (url.searchParams.get("format") === "csv") {
-      const csv = "\uFEFF" + [["Email", "Name", "Joined (UTC)"], ...rows.map(row => [row.email, row.name, row.created_at])].map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+      const csv = "\uFEFF" + [["Email", "Name", "Joined (Eastern Time)"], ...rows.map(row => [row.email, row.name, formatEasternTime(row.created_at)])].map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
       return new Response(csv, { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="thriller-future-event-contacts.csv"', "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
     }
     return json({ items: rows.map(row => ({ id: row.id, email: row.email, name: row.name, createdAt: row.created_at })) });

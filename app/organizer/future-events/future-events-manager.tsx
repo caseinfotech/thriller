@@ -1,14 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Download, RefreshCw, Trash2, Users } from "lucide-react";
+import { formatEasternTime } from "../../../lib/eastern-time";
 import styles from "./future-events-manager.module.css";
 
 type Contact = { id: string; email: string; name: string; createdAt: string };
 type Result = { items?: Contact[]; error?: string };
-const date = (value: string) => {
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.valueOf()) ? value : new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(parsed);
-};
 
 export default function FutureEventsManager() {
   const [items, setItems] = useState<Contact[]>([]);
@@ -50,8 +47,8 @@ export default function FutureEventsManager() {
     {message && <p className={styles.message} role="status">{message}</p>}
     {error && <p className={styles.error} role="alert">{error}</p>}
     {loading ? <p className={styles.empty}>Loading contacts…</p> : items.length === 0 ? <p className={styles.empty}>No one has joined the mailing list yet.</p> : <div className={styles.tableWrap}>
-      <table><thead><tr><th>Email</th><th>Name</th><th>Joined</th><th><span className={styles.srOnly}>Actions</span></th></tr></thead>
-        <tbody>{items.map(contact => <tr key={contact.id}><td><a href={`mailto:${contact.email}`}>{contact.email}</a></td><td>{contact.name || "—"}</td><td>{date(contact.createdAt)}</td><td><button className={styles.remove} type="button" onClick={() => void remove(contact)} disabled={busy === contact.id} aria-label={`Remove ${contact.email}`}><Trash2 size={16} /> Remove</button></td></tr>)}</tbody>
+      <table><thead><tr><th>Email</th><th>Name</th><th>Joined (Eastern Time)</th><th><span className={styles.srOnly}>Actions</span></th></tr></thead>
+        <tbody>{items.map(contact => <tr key={contact.id}><td><a href={`mailto:${contact.email}`}>{contact.email}</a></td><td>{contact.name || "—"}</td><td>{formatEasternTime(contact.createdAt)}</td><td><button className={styles.remove} type="button" onClick={() => void remove(contact)} disabled={busy === contact.id} aria-label={`Remove ${contact.email}`}><Trash2 size={16} /> Remove</button></td></tr>)}</tbody>
       </table>
     </div>}
   </section>;
