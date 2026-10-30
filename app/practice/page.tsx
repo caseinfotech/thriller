@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Moon, ArrowDown, ArrowUpRight, Download } from "lucide-react";
+import { Moon, ArrowDown, ArrowUpRight } from "lucide-react";
 import PracticePlayer from "../practice-audio/practice-player";
 import PracticeMedia from "./practice-media";
 import styles from "./practice.module.css";
@@ -92,12 +92,7 @@ export default function Practice() {
               <p className="eyebrow">SLOW IT DOWN. BUILD IT UP.</p>
               <h2 id="tempo-heading">Find your<br /><em>Thriller tempo.</em></h2>
               <p>Start slow while you learn the steps, then work your way up to the original speed. Scrub to any part of the song to practice it again.</p>
-              <p className={styles.downloadHeading}>Download practice tracks</p>
-              <div className={styles.trackDownloads}>
-                <a className={styles.downloadTrack} href="/audio/thriller-michael-jackson-90-tempo.mp3" download>Thriller · 90% tempo <Download size={16} aria-hidden="true" /></a>
-                <a className={styles.downloadTrack} href="/audio/billie-jean.mp3" download>Billie Jean · original speed <Download size={16} aria-hidden="true" /></a>
-                <a className={styles.downloadTrack} href="/audio/beat-it.mp3" download>Beat It · original speed <Download size={16} aria-hidden="true" /></a>
-              </div>
+              <a className={styles.downloadTrack} href="/practice-songs">Download all five practice songs <ArrowUpRight size={16} aria-hidden="true" /></a>
               <a href="/practice-audio">Open the tempo player on its own <ArrowUpRight size={15} aria-hidden="true" /></a>
             </div>
             <PracticePlayer />
