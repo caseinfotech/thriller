@@ -120,7 +120,7 @@ async function completeUpload(id: string) {
       },
       async cancel() { if (reader) await reader.cancel(); },
     });
-    const saved = await bucket.put(row.object_key, stream, { httpMetadata: { contentType: row.content_type } });
+    const saved = await bucket.put(row.object_key, stream.pipeThrough(new FixedLengthStream(row.file_size)), { httpMetadata: { contentType: row.content_type } });
     if (saved.size !== row.file_size) { await bucket.delete(row.object_key); return reply({ error: "The uploaded file could not be assembled completely." }, 500); }
     await Promise.all(head.map((item) => bucket.delete(item.key)));
     await db.prepare("UPDATE event_media SET status='pending' WHERE id=? AND status='uploading'").bind(id).run();
