@@ -4,7 +4,7 @@ import styles from "./practice-songs.module.css";
 
 export const metadata: Metadata = {
   title: "Practice Song Downloads | South Haven Thriller",
-  description: "Download Thriller at 90% tempo and three Michael Jackson songs at original speed.",
+  description: "Download Thriller at 90% tempo and four Michael Jackson songs at original speed.",
   robots: { index: false, follow: false },
 };
 

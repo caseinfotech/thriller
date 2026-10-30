@@ -46,3 +46,17 @@ export const eventMediaRateLimits = sqliteTable("event_media_rate_limits", {
   fingerprint: text("fingerprint").notNull(),
   count: integer("count").notNull().default(0),
 }, table => [primaryKey({ columns: [table.day, table.fingerprint] })]);
+
+export const futureEventContacts = sqliteTable("future_event_contacts", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull().default(""),
+  consentedAt: text("consented_at").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, table => [index("future_event_contacts_created_idx").on(desc(table.createdAt))]);
+
+export const futureEventSignupRateLimits = sqliteTable("future_event_signup_rate_limits", {
+  day: text("day").notNull(),
+  fingerprint: text("fingerprint").notNull(),
+  count: integer("count").notNull().default(0),
+}, table => [primaryKey({ columns: [table.day, table.fingerprint] })]);
