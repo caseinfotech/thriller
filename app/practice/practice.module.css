@@ -3,3 +3,7 @@
 
 .tempoCopy>a.downloadTrack{display:inline-flex;align-items:center;gap:10px;background:#bc202c;color:#fff;padding:12px 16px;border-radius:3px;text-decoration:none;font-size:13px;font-weight:700;margin:18px 0 14px;line-height:1.4}
 .tempoCopy>a.downloadTrack:hover{background:#971823}
+
+.downloadHeading{font-size:13px;font-weight:700;color:#fff0d0;margin:20px 0 0}
+.trackDownloads{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 14px}
+.tempoCopy>a.downloadTrack{margin:0;}

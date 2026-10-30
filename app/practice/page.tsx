@@ -22,7 +22,7 @@ export default function Practice() {
           <h1>A little practice.<br /><em>A lot of Thriller.</em></h1>
           <p>Learn with Jess, repeat your favorite moves, and find your tempo.</p>
           <nav className={styles.shortcuts} aria-label="Practice resources">
-            <a href="#jess-video">Practice with Jess</a><a href="#jess-video-2">Video 2</a><a href="#jess-video-3">Video 3</a><a href="#tempo">Thriller tempo</a><a href="#videos">Thriller reference</a><a href="/moves-cheatsheets">Moves Cheatsheets</a>
+            <a href="#jess-video">Practice with Jess</a><a href="#jess-video-2">Video 2</a><a href="#jess-video-3">Video 3</a><a href="#event-recordings">Event videos</a><a href="#tempo">Thriller tempo</a><a href="#videos">Thriller reference</a><a href="/moves-cheatsheets">Moves Cheatsheets</a>
           </nav>
         </section>
         <PracticeMedia>
@@ -69,12 +69,35 @@ export default function Practice() {
               </video>
             </div>
           </section>
+          <section className={styles.tutorials} id="event-recordings" aria-labelledby="event-recordings-heading">
+            <p className="eyebrow">FROM THE EVENT</p>
+            <h2 id="event-recordings-heading">Practice videos.</h2>
+            <div className={styles.videoGrid}>
+              <article className={styles.videoCard}>
+                <h3>Event practice · wide view</h3>
+                <video controls playsInline preload="metadata" aria-label="Event practice video 1">
+                  <source src="/videos/IMG_6985-slim.mp4" type="video/mp4" />Your browser does not support video playback.
+                </video>
+              </article>
+              <article className={styles.videoCard}>
+                <h3>Event practice · portrait view</h3>
+                <video controls playsInline preload="metadata" aria-label="Event practice video 2">
+                  <source src="/videos/IMG_7042-slim.mp4" type="video/mp4" />Your browser does not support video playback.
+                </video>
+              </article>
+            </div>
+          </section>
           <section className={styles.tempo} id="tempo" aria-labelledby="tempo-heading">
             <div className={styles.tempoCopy}>
               <p className="eyebrow">SLOW IT DOWN. BUILD IT UP.</p>
               <h2 id="tempo-heading">Find your<br /><em>Thriller tempo.</em></h2>
               <p>Start slow while you learn the steps, then work your way up to the original speed. Scrub to any part of the song to practice it again.</p>
-              <a className={styles.downloadTrack} href="/audio/thriller-michael-jackson-90-tempo.mp3" download>Download the song at 90% tempo <Download size={16} aria-hidden="true" /></a>
+              <p className={styles.downloadHeading}>Download practice tracks</p>
+              <div className={styles.trackDownloads}>
+                <a className={styles.downloadTrack} href="/audio/thriller-michael-jackson-90-tempo.mp3" download>Thriller · 90% tempo <Download size={16} aria-hidden="true" /></a>
+                <a className={styles.downloadTrack} href="/audio/billie-jean.mp3" download>Billie Jean · original speed <Download size={16} aria-hidden="true" /></a>
+                <a className={styles.downloadTrack} href="/audio/beat-it.mp3" download>Beat It · original speed <Download size={16} aria-hidden="true" /></a>
+              </div>
               <a href="/practice-audio">Open the tempo player on its own <ArrowUpRight size={15} aria-hidden="true" /></a>
             </div>
             <PracticePlayer />
