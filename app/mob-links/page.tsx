@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const venmoUrl = "https://venmo.com/u/jessica-lotak";
+const venmoUrl = "https://venmo.com/u/J_Lota";
 
 export default function MobLinks() {
   return <main className={styles.page}>

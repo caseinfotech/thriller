@@ -1,6 +1,7 @@
 "use client";
 import { FormEvent, useState } from "react";
 import { ArrowUpRight, Check, Moon } from "lucide-react";
+import { readJsonResponse } from "../../lib/client-api-response";
 import styles from "./future-events.module.css";
 
 export default function FutureEventsForm() {
@@ -18,7 +19,7 @@ export default function FutureEventsForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: String(values.get("email") || ""), name: String(values.get("name") || ""), consent: values.get("consent") === "on", website: String(values.get("website") || "") }),
       });
-      const data = await response.json() as { error?: string };
+      const data = await readJsonResponse<{ error?: string }>(response, "The mailing-list service is temporarily unavailable. Please try again later.");
       if (!response.ok) throw new Error(data.error || "Please try again.");
       setStatus("success");
       form.reset();

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Camera, Check, ImagePlus, Play, X } from "lucide-react";
+import { readJsonResponse } from "../../lib/client-api-response";
 import styles from "./photos.module.css";
 
 type MediaItem = { id: string; type: "photo" | "video"; contentType: string; caption: string; contributor: string; createdAt: string; url: string };
@@ -15,7 +16,7 @@ export default function PhotoAlbum() {
 
   async function refresh() {
     setLoading(true); setAlbumError("");
-    try { const response = await fetch("/api/event-media", { cache: "no-store" }); const data = await response.json() as AlbumResponse; if (!response.ok) throw new Error(data.error || "The album is temporarily unavailable."); setItems(data.items || []); }
+    try { const response = await fetch("/api/event-media", { cache: "no-store" }); const data = await readJsonResponse<AlbumResponse>(response, "The photo service is temporarily unavailable. Please try again later."); if (!response.ok) throw new Error(data.error || "The album is temporarily unavailable."); setItems(data.items || []); }
     catch (error) { setAlbumError(error instanceof Error ? error.message : "The album is temporarily unavailable."); }
     finally { setLoading(false); }
   }
@@ -32,7 +33,7 @@ export default function PhotoAlbum() {
       for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
         const file = files[fileIndex]; setProgress(`Preparing ${file.name} (${fileIndex + 1} of ${files.length})…`);
         const startResponse = await fetch("/api/event-media/upload", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fileName: file.name, contentType: file.type, size: file.size, email: String(data.get("email") || ""), contributor: String(data.get("contributor") || ""), caption: String(data.get("caption") || ""), creditContributor: data.get("credit") === "on", consent: data.get("consent") === "on" }) });
-        const start = await startResponse.json() as { id?: string; chunkSize?: number; error?: string };
+        const start = await readJsonResponse<{ id?: string; chunkSize?: number; error?: string }>(startResponse, "The photo service is temporarily unavailable. Please try again later.");
         if (!startResponse.ok || !start.id) throw new Error(start.error || `Could not start ${file.name}.`);
         try {
           const chunkSize = start.chunkSize || MAX_CHUNK, parts = Math.ceil(file.size / chunkSize);
@@ -40,12 +41,12 @@ export default function PhotoAlbum() {
             setProgress(`Uploading ${file.name} · ${Math.round(((part + 1) / parts) * 100)}%`);
             const chunk = file.slice(part * chunkSize, Math.min(file.size, (part + 1) * chunkSize));
             const response = await fetch(`/api/event-media/upload?id=${encodeURIComponent(start.id)}&part=${part}`, { method: "POST", headers: { "Content-Type": "application/octet-stream", "x-part-number": String(part) }, body: chunk });
-            const result = await response.json() as { error?: string };
+            const result = await readJsonResponse<{ error?: string }>(response, "The photo service is temporarily unavailable. Please try again later.");
             if (!response.ok) throw new Error(result.error || `Could not upload ${file.name}.`);
           }
           setProgress(`Finishing ${file.name}…`);
           const finish = await fetch(`/api/event-media/upload?id=${encodeURIComponent(start.id)}&complete=1`, { method: "POST" });
-          const result = await finish.json() as { error?: string };
+          const result = await readJsonResponse<{ error?: string }>(finish, "The photo service is temporarily unavailable. Please try again later.");
           if (!finish.ok) throw new Error(result.error || `Could not finish ${file.name}.`);
           completed++;
         } catch (error) {
